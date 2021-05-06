@@ -2,27 +2,29 @@ package se.kth.iv1350.seminar3.model.DTO;
 
 /**
  *
+ * @author SVT
  */
-public class StoreAddressDTO {
+public class ReceiptDTO {
+    private SaleDTO concludedSaleDTO;
     private String storeName;
     private String streetName;
     private int postalNumber;
-    private String city;
+    private String city;    
+    private java.time.LocalDate saleDate = java.time.LocalDate.now();
     
-    /**
-     * 
-     * @param storeName
-     * @param streetName
-     * @param postalNumber
-     * @param city 
-     */
-    public StoreAddressDTO(String storeName, String streetName, int postalNumber, String city){
+    public ReceiptDTO(SaleDTO concludedSaleDTO, String storeName, String streetName, int postalNumber, String city, java.time.LocalDate saleDate){
+        this.concludedSaleDTO = concludedSaleDTO;
         this.storeName = storeName;
         this.streetName = streetName;
-        this. postalNumber = postalNumber;
+        this.postalNumber = postalNumber;
         this.city = city;
     }
     
+    /**
+     * 
+     * @return 
+     */
+    public SaleDTO getSaleDTO(){ return this.concludedSaleDTO; }
     /**
      * 
      * @return 
@@ -43,4 +45,9 @@ public class StoreAddressDTO {
      * @return 
      */
     public String getCity(){ return this.city; }
+    /**
+     * 
+     * @return 
+     */
+    public java.time.LocalDate getSaleDate(){ return this.saleDate; }
 }

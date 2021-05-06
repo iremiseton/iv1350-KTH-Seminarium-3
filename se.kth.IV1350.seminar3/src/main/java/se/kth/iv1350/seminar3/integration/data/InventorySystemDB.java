@@ -1,46 +1,57 @@
 package se.kth.iv1350.seminar3.integration.data;
 
-import java.io.File;  // Import the File class
-import java.io.FileNotFoundException;  // Import this class to handle errors
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.List;
-import java.util.Scanner; // Import the Scanner class to read text files
 import java.util.ArrayList;
-
+import java.util.List;
 
 import se.kth.iv1350.seminar3.model.Item;
 
-public class InventorySystemDB{
-    private List<Item> itemCatalog = new ArrayList();
-    private String dbPath = "1 stol 250 0.125\n2 bank 230 0.125\n3 bajs 99 0.125\n4 koja 500 0.125";   
+import se.kth.iv1350.seminar3.model.DTO.ItemDTO;
+import se.kth.iv1350.seminar3.model.DTO.SaleDTO;
 
+/**
+ *
+ * @author SVT
+ */
+public class InventorySystemDB {
+
+    private List<ItemTemplate> itemCatalog = new ArrayList<>(); 
+    
+    /**
+     * Creates an instance of inventory system consisting of ten predefined items. 
+     */
     public InventorySystemDB(){
-        connectToDatabase();
+        itemCatalog.add(new ItemTemplate("Eko Gammaldagsmjölk", 15.96f,0.06,8));
+        itemCatalog.add(new ItemTemplate("red milk", 12.5f,0.03,1));
+        itemCatalog.add(new ItemTemplate("green milk", 11.0f,0.03,2));
+        itemCatalog.add(new ItemTemplate("Kalles Kaviar Guld", 25.95f,0.06,3));
+        itemCatalog.add(new ItemTemplate("Coca cola", 20.0f,0.06,4));
+        itemCatalog.add(new ItemTemplate("Hummer", 440.0f,0.125,5));
+        itemCatalog.add(new ItemTemplate("Risgrynsgröt", 8.95f,0.03,6));
+        itemCatalog.add(new ItemTemplate("Havregrynsgröt", 6.95f,0.03,7));
+        itemCatalog.add(new ItemTemplate("Laxfile", 125.0f,0.125,9));
+        itemCatalog.add(new ItemTemplate("Skagenröra", 39.95f,0.125,10));
     }
-
-    public void connectToDatabase() {
-            
-            String[] spec = this.dbPath.split("\n");
-
-            for (String line : spec) {
-                
-                String[] l = line.split(" ");
-
-                Item newItem = new Item(
-                    l[1], 
-                    Float.parseFloat(l[2]), 
-                    Double.parseDouble(l[3]), 
-                    Integer.parseInt(l[0])
-                );
-
-                itemCatalog.add(newItem);
+    
+    
+    
+    /**
+     * Method retrives information of an item.
+     * @param barCode - Is used to determine what item the method should return.
+     * @return Returns an ItemDTO.
+     */
+    public ItemDTO retriveItemDescription(int barCode){
+        int i;
+        for(i = 0; i < itemCatalog.size(); i++){
+            if(itemCatalog.get(i).getBarCode() == barCode){
+                ItemDTO itemDTO = new ItemDTO(itemCatalog.get(i).getName(), itemCatalog.get(i).getPrice(), itemCatalog.get(i).getVAT(), itemCatalog.get(i).getBarCode());
+                return itemDTO;
             }
+        }
+        return null;
     }
-
-    public List<Item> updateList() {
-        return this.itemCatalog;
+    
+    
+    public void updateInventory(SaleDTO completeSaleDTO){
+        
     }
-
-
 }

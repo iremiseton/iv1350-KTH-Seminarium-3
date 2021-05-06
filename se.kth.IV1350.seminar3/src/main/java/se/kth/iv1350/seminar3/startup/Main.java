@@ -1,8 +1,11 @@
 package se.kth.iv1350.seminar3.startup;
 
-import se.kth.iv1350.seminar3.integration.data.SaleLogDB;
 import se.kth.iv1350.seminar3.controller.Controller;
 import se.kth.iv1350.seminar3.view.View;
+
+import se.kth.iv1350.seminar3.integration.data.SaleLogDB;
+import se.kth.iv1350.seminar3.integration.data.StoreAddressDB;
+
 /**
  * Starts the entire application. Contains the main method used to start the application.
  */
@@ -14,12 +17,16 @@ public class Main {
     */
     public static void main(String[] args){
         
+        SaleLogDB saleLog = new SaleLogDB();
         
-        Controller contr = new Controller();
+        StoreAddressDB storeAdr = new StoreAddressDB("Amigo", "Isafjordsgatan 22", 16440, "Stockholm");
+        
+        Controller contr = new Controller(saleLog, storeAdr);
+        
         View view = new View(contr);
-
-        view.startSale();
-        System.out.println(view.scanItem(2).getPrice());
+        
+        //Starts simulation
+        view.runFakeExecution();
     
     }
 }

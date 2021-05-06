@@ -1,50 +1,59 @@
 package se.kth.iv1350.seminar3.model;
 
+import se.kth.iv1350.seminar3.integration.data.InventorySystemDB;
+import se.kth.iv1350.seminar3.integration.data.ItemTemplate;
+
+
+import se.kth.iv1350.seminar3.model.DTO.ItemDTO;
+
+/**
+ *
+ */
 public class Item {
-    
     private String name;
     private float price;
     private double VAT;
     private int barCode;
     
-
+    /*public Item (int barCode, InventorySystemDB invSys){
+        
+    }*/
+    
     /**
-     *  Constructor for Item.
-     * 
-     * @param name
-     * @param price
-     * @param VAT
-     * @param barCode
+     * Creates an Item instanse.
+     * @param name - The name of the instance
+     * @param price - The price of the instance
+     * @param VAT - The VAT of the instance
+     * @param barCode - The barcode of the instance
      */
+    public Item(int barCode, InventorySystemDB invSys){
+        this.barCode = barCode;
 
-    public Item(String name, 
-                float price, 
-                double VAT, 
-                int barCode) {
-
-                    this.name = name;
-                    this.price = price;
-                    this.VAT = VAT;
-                    this.barCode = barCode;
+        ItemDTO temporalDTO = invSys.retriveItemDescription(barCode);
+        this.name = temporalDTO.getName();
+        this.price = temporalDTO.getPrice();
+        this.VAT = temporalDTO.getVAT();
+        this.barCode = temporalDTO.getbarCode();
     }
-
-    public String getName() {
-        return this.name;
-    }
-
-    public float getPrice() {
-        return this.price;
-    }
-
-    public double getVAT() {
-        return this.VAT;
-    }
-
-    public int getBarcode() {
-        return this.barCode;
-    }
-
-    public String toString() {
-        return this.name;
-    }
+    
+   /**
+     * This method reads Item's name.
+     * @return the name.
+     */
+    public String getName(){ return this.name; }
+    /**
+     * This method reads Item's price.
+     * @return the price.
+     */
+    public float getPrice(){ return this.price; }
+    /**
+     * This method reads Item's VAT.
+     * @return the VAT.
+     */
+    public double getVAT(){ return this.VAT; }
+    /**
+     * This method reads Item's barcode.
+     * @return The barcode.
+     */
+    public int getbarCode(){ return this.barCode; }
 }
