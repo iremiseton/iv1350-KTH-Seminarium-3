@@ -14,10 +14,10 @@ import se.kth.iv1350.seminar3.integration.data.CustomerDB;
 import se.kth.iv1350.seminar3.integration.data.InventorySystemDB;
 import se.kth.iv1350.seminar3.integration.data.SaleLogDB;
 import se.kth.iv1350.seminar3.integration.data.StoreAddressDB;
+import se.kth.iv1350.seminar3.model.Payment.InsufficientFundsException;
 
 /**
  * This is the application's only controller. All calls to the model pass through this class.
- * 
  */
 public class Controller {    
     private InventorySystemDB invSys;
@@ -31,69 +31,86 @@ public class Controller {
     private Payment payment;
     
     /**
-     * 
+     * Creates an instance of controller and stores relevant object instances of other classes.
+     * @param saleLog - This class instance is stored to be used later.
+     * @param storeAddress - This class instance is stored to be used later. 
      */
     public Controller(SaleLogDB saleLog, StoreAddressDB storeAddress){
-        InventorySystemDB invSys = new InventorySystemDB();
-        this.invSys = invSys;
         
-        CustomerDB custDB = new CustomerDB();
-        this.custDB = custDB;
+        this.invSys = new InventorySystemDB();
         
-        AccountingSystemDB accSys = new AccountingSystemDB();
-        this.accSys = accSys;
+        this.custDB = new CustomerDB();
         
-        this. saleLog = saleLog;
+        this.accSys = new AccountingSystemDB();
+        
+        this.saleLog = saleLog;
         
         this.storeAddress = storeAddress;
 
-        this.receipt = new Receipt(storeAddress);
+        try{
+            this.receipt = new Receipt(storeAddress);
+        } catch(ConnectionTimedOut e){
+            System.out.println("[Logging to file]: " + "'" + e + "'");
+            System.out.println(e);
+        }
     }
     
     /**
      * Starts a new sale. This method must be called before doing anything else during a sale.
+     * @throws ConnectionTimedOut if StoreAddressDB is not responding.
      */
-    public void startSale(){
-        //Skapar sale o sparar dess instans.
-        Sale currentSale = new Sale(this.storeAddress);
-        this.currentSale = currentSale;
+    public void startSale() throws ConnectionTimedOut{
+        currentSale = new Sale(storeAddress);
     }
     
     /**
-     * 1) Skapar en Item, går till Inventory system o fyller på detta item.
-     * 2) Förbereder Item for transport till sale genom skapandet av ItemDTO.
+     * 1) Creates an Item instance and then sends info of the item back to cashier.
+     * 2) Stores the item in Sale. 
      * @param barCode
      * @param quantity
-     * @return 
+     * @return - Returns an ItemDTO consisting of data fetched from Item. 
+     * @throws se.kth.iv1350.seminar3.integration.data.InventorySystemDB.InvalidItemBarCodeException if an unrecognized item is scanned. 
+     * @throws ConnectionTimedOut if InventorySystemDB is not responding.
      */
-    public ItemDTO scan(int barCode, int quantity){
-        Item item = new Item(barCode, this.invSys);
+    public ItemDTO scan(int barCode, int quantity) throws InventorySystemDB.InvalidItemBarCodeException, ConnectionTimedOut{
+        Item item = new Item(barCode, invSys);
         
-        ItemDTO itemDTO = new ItemDTO(item.getName(), item.getPrice(), item.getVAT(), item.getbarCode());
-        this.currentSale.addItemToSale(itemDTO, quantity);
+        ItemDTO itemDTO = new ItemDTO(item.getName(), item.getPrice(), item.getVAT(), item.getBarCode());
+        currentSale.addItemToSale(itemDTO, quantity);
         
         return itemDTO;
     }
     
-    
-    public double signalDiscount(int customerID){
-        double discountRate = currentSale.getDiscountAmount(customerID, custDB);
-        return discountRate;
+    /**
+     * Method is mainly responsible for checking if a customer has a discount registered in the store's database.
+     * @param customerID - Represents the customer in the store's customer-database.
+     * @return - The amount of discount eligable, (if none return zero).
+     * @throws ConnectionTimedOut if CustomerDB is not responding.
+     */
+    public double signalDiscount(int customerID) throws ConnectionTimedOut{
+        return currentSale.getDiscountAmount(customerID, custDB);
     }
     
-    
+    /**
+     * Concludes the sale by confirming the scanned items are correct before moving on to payment. 
+     * @return - Returns a SaleDTO consisitng of data fetched from Sale.
+     */
     public SaleDTO endSale(){
         SaleDTO concludedSale = currentSale.displaySale();
         return concludedSale;
     }
     
-    
-    public ReceiptDTO registerPayment(float amount){
-        Payment payment = new Payment(amount, accSys);
-        this.payment = payment;
+    /**
+     * Evaluates if the customer's payment is valid. 
+     * @param amount - The amount paid by the customer.
+     * @return - A receipt of type ReceiptDTO.
+     * @throws ConnectionTimedOut if AccountingSystemDB is not responding.
+     * @throws InsufficientFundsException if user has not paid the full price of the sale.
+     */
+    public ReceiptDTO registerPayment(float amount) throws ConnectionTimedOut, InsufficientFundsException{
+        this.payment = new Payment(amount, accSys);
         
         ReceiptDTO receiptDTO = receipt.printReceipt(this.payment, this.currentSale, this.saleLog, this.invSys);
         return receiptDTO;
     }
-    
 }

@@ -1,18 +1,14 @@
 package se.kth.iv1350.seminar3.model.DTO;
 
 /**
- * 
+ * This is a data transfer object (DTO), used to transfer data from the object Item.
  */
 public class ItemDTO {
-    private String name;
-    private float price;
-    private double VAT;
-    private int barCode;
+    private final String name;
+    private final float price;
+    private final double VAT;
+    private final int barCode;
     
-
-    public ItemDTO() {
-        
-    }
     /**
      * Creates an ItemDTO instanse that is read only and used to transfer Item data.
      * @param name - The name of the instance
@@ -46,5 +42,5 @@ public class ItemDTO {
      * This method reads ItemDTO's barcode.
      * @return The barcode.
      */
-    public int getbarCode(){ return this.barCode; }
+    public int getBarCode(){ return this.barCode; }
 }

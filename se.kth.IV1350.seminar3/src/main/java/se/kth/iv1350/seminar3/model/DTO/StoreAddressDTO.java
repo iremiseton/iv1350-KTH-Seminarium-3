@@ -1,20 +1,20 @@
 package se.kth.iv1350.seminar3.model.DTO;
 
 /**
- *
+ * This is a data transfer object (DTO), used to transfer data from the object StoreAddressDB.
  */
 public class StoreAddressDTO {
-    private String storeName;
-    private String streetName;
-    private int postalNumber;
-    private String city;
+    private final String storeName;
+    private final String streetName;
+    private final int postalNumber;
+    private final String city;
     
     /**
-     * 
-     * @param storeName
-     * @param streetName
-     * @param postalNumber
-     * @param city 
+     * Creates an instance of StoreAddressDTO with data fetched from the StoreAddressDB object.
+     * @param storeName - The store's name.
+     * @param streetName - A street name which is a part of the store's address.
+     * @param postalNumber - A postal number which is a part of the store's address.
+     * @param city - A city which is a part of the store's address.
      */
     public StoreAddressDTO(String storeName, String streetName, int postalNumber, String city){
         this.storeName = storeName;
@@ -24,23 +24,23 @@ public class StoreAddressDTO {
     }
     
     /**
-     * 
-     * @return 
+     * This method reads the store's name.
+     * @return - The store name.
      */
     public String getStoreName(){ return this.storeName; }
     /**
-     * 
-     * @return 
+     * This method reads the street name.
+     * @return - The street name.
      */
     public String getStreetName(){ return this.streetName; }
     /**
-     * 
-     * @return 
+     * This method reads postal number.
+     * @return - The postal number.
      */
     public int getPostalNumber(){ return this.postalNumber; }
     /**
-     * 
-     * @return 
+     * This method reads the city.
+     * @return - The city.
      */
     public String getCity(){ return this.city; }
 }
